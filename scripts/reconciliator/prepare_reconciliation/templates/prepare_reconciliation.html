@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Prepare the Reconciliator</h1>
+    <form action="{% url 'run_preparation' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p>We are prepraring this survey for reconciliation: <b>{{ cur_survey }}</b></p>
+
+        <p>How many coders reviewed each response?</p>
+        <input type="number" id="quantity" name="quantity" min="1" value="2">
+
+        <p>If you have updated your glossary, please upload the new XLSX file:</p>
+        <input type="file" id="fileUpload" name="fileUpload"></p>
+
+        <p>Don't forget to mark questions as open-coded using <a href="/reviewSurveyQuestions/">Review Questions</a></p>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+
+    </form>
+
+    <p><a href=".." style="font-size: 0.9em">Back to Home Page</a></p>
+{% endblock %}

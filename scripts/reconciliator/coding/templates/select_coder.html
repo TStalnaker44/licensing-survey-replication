@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <style>
+        .main {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .select-coder {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button {
+            font-family: Arial, sans-serif;
+            border-radius: 5px;
+        }
+
+        .add-coder-button {
+            background-color: #4CAF50;
+            color: black;
+            border: 1px solid #4CAF50;
+        }
+
+        .add-coder-button:hover {
+            background-color: #4CAF50;
+            border-color: #45a049;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="main">
+    <h1>
+        Select a Coder
+    </h1>
+    <form action="{% url 'addCoder' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="add-coder-button"> Add Coder</button>
+    </form>
+
+    <div class="select-coder">
+        <form action="{% url 'selectCoder' %}" method="post">
+            {% csrf_token %}
+            <select id="select_coder" name="select_coder" required>
+                <option value="" disabled selected>Select Coder</option>
+                {% for coder in coders %}
+                    <option value="{{ coder }}">{{ coder }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Save and Continue</button>
+        </form>
+    </div>
+    <div class="nav">
+        <p><a href="..">Home</a></p>
+    </div>
+</div>
+</body>
+</html>

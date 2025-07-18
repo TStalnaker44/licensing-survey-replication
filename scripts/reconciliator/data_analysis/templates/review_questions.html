@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <style>
+        .group_block {
+            text-align: left;
+            border: 1px solid black;
+            padding: 10px 10px 15px;
+            margin: 10px;
+        }
+
+        .question_block {
+            border: 1px solid black;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .rank_options {
+            width: 25%;
+        }
+
+        .question_id {
+            width: 35px;
+            font-size: medium;
+            font-weight: bold;
+            padding: 5px;
+            text-align: center;
+        }
+
+        #uniqueness-text {
+            color: red;
+        }
+
+    </style>
+
+    <script>
+
+        document.getElementById('myForm').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        });
+
+        function togglePartition(qname, options) {
+            part_button = document.getElementById(qname + "_part_button");
+            if (part_button.innerHTML == "Add Partition") {
+                addPartition(qname, options);
+                part_button.innerHTML = "Remove Partition";
+            } else {
+                removePartition(qname);
+                part_button.innerHTML = "Add Partition";
+            }
+        }
+
+        function addPartition(qname, options) {
+            options = options.split("|");
+            var partition = document.createElement("div");
+            partition.setAttribute("class", "partition_block");
+            inner = "<p>Partition:</p><p class='part'>Name: <input type='text' id='" + qname + "_partition_name' name='" + qname + "_partition_name'></p><p class='part'>Roles: <ol>";
+            for (var i = 0; i < options.length; i++) {
+                inner += "<li><input class='long-role' type='text' id='" + qname + "_partition_role' name='" + qname + "_partition_role' value='" + options[i] + "'>";
+                inner += "<input type='text' id='" + qname + "_short_role' name='" + qname + "_short_role' value=''></li>";
+            }
+            partition.innerHTML = inner + "</ol></p>";
+            document.getElementById(qname + "_partition").appendChild(partition);
+        }
+
+        function removePartition(qname) {
+            var partition = document.getElementById(qname + "_partition");
+            partition.removeChild(partition.lastChild);
+        }
+
+        // Detects if the changed question ID is unique, and acts accordingly
+        function detectQIDUnique() {
+            // Get the list of all input elements (question_id is only used for inputs)
+            const elements = document.getElementsByClassName("question_id");
+            const elementValues = [...elements].map(element => element.value);
+
+            // Look for QIDs with >1 of that QID
+            const qidCounts = {};
+
+            let unique = true;
+
+            for (const qid of elementValues) {
+                if (qid in qidCounts) {
+                    qidCounts[qid]++;
+                    unique = false;
+                } else {
+                    qidCounts[qid] = 1;
+                }
+            }
+
+            // Disable the button if it isn't unique
+            document.getElementById("submit-button").disabled = !unique;
+
+            const uniquenessText = document.getElementById("uniqueness-text");
+
+            // Update the uniqueness text
+            if (unique) {
+                uniquenessText.textContent = "";
+            } else {
+                // Get all of the values that are not unique
+                const nonUnique = Object.keys(qidCounts).filter(key => qidCounts[key] > 1);
+
+                if (nonUnique.length === 1) {
+                    uniquenessText.textContent = `Question ID ${nonUnique[0]} is not unique!`;
+                } else if (nonUnique.length === 2) {
+                    uniquenessText.textContent = `Question IDs ${nonUnique[0]} and ${nonUnique[1]} are not unique!`;
+                } else {
+                    const rest = nonUnique.slice(0, nonUnique.length - 1);
+                    const last = nonUnique[nonUnique.length - 1];
+
+                    const joinedText = rest.map(id => `${id}, `).join("") + " and " + last;
+
+                    uniquenessText.textContent = `Question IDs ${joinedText} are not unique!`;
+                }
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+
+<h1>Prepare Questions File</h1>
+
+<p>Please make sure that all questions have unique ids.</p>
+
+<form id="myForm" action="{% url 'updateSurveyQuestions' %}" method="post">
+    {% csrf_token %}
+
+    <input type="hidden" id="survey" name="survey" value="{{ survey }}">
+
+    {% for g_name, g_data in questions.items %}
+        <h2>{{ g_name }}</h2>
+
+        <div class="group_block">
+
+            {% for q_name, q_data in g_data.items %}
+
+                <h3><input class="question_id" type="text" id="{{ q_name }}_id" name="{{ q_name }}_id"
+                           value="{{ q_name }}" onchange='detectQIDUnique()'>:
+                    {{ q_data.question }}</h3>
+
+                <div class="question_block">
+                    <p>Question Type:
+                        <select id="{{ q_name }}_qtype" name="{{ q_name }}_qtype">
+                            {% for qtype in question_types %}
+                                {% if q_data.type == qtype %}
+                                    <option value="{{ qtype }}" selected>{{ qtype }}</option>
+                                {% else %}
+                                    <option value="{{ qtype }}">{{ qtype }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select></p>
+
+                    <div id="contains_pii">
+                        {% if q_data.contains_pii %}
+                            <input type="checkbox" id="{{ q_name }}_contains_pii" name="{{ q_name }}_contains_pii"
+                                   checked>
+                        {% else %}
+                            <input type="checkbox" id="{{ q_name }}_contains_pii" name="{{ q_name }}_contains_pii">
+                        {% endif %}
+                        <label for="{{ q_name }}_contains_pii">Contains Personally Identifiable Information
+                            (PII)</label>
+                    </div>
+
+                    <div id="coded">
+                        {% if q_data.coded %}
+                            <input type="checkbox" id="{{ q_name }}_coded" name="{{ q_name }}_coded" checked>
+                        {% else %}
+                            <input type="checkbox" id="{{ q_name }}_coded" name="{{ q_name }}_coded">
+                        {% endif %}
+                        <label for="{{ q_name }}_coded">Response is manually reviewed through open-coding</label>
+                    </div>
+
+                    <div id="convert_to_range">
+                        {% if q_data.convert_to_range %}
+                            <input type="checkbox" id="{{ q_name }}_convert_to_range"
+                                   name="{{ q_name }}_convert_to_range" checked>
+                        {% else %}
+                            <input type="checkbox" id="{{ q_name }}_convert_to_range"
+                                   name="{{ q_name }}_convert_to_range">
+                        {% endif %}
+                        <label for="{{ q_name }}_convert_to_range">Convert response to a numeric range</label>
+                    </div>
+
+                    {% if q_data.type == "ranked" or q_data.type == "ranked-with-other" %}
+                        <p>Ranking Options:
+                        <ol>
+                            {% for option in q_data.options %}
+                                <li>
+                                    <input class="rank_options" type="text" id="{{ q_name }}_ranking_options"
+                                           name="{{ q_name }}_ranking_options" value="{{ option }}">
+                                    <!-- <button>Remove</button> -->
+                                </li>
+                            {% endfor %}
+                        </ol>
+                        <!-- <div><button>Add Option</button></div> -->
+                        </p>
+                    {% endif %}
+
+                    {% if q_data.type == "multi-select" or q_data.type == "single-select" or q_data.type == "multi-select-with-other" or q_data.type == "single-select-with-other" %}
+                        <div id="{{ q_name }}_partition"></div>
+                        <button id="{{ q_name }}_part_button" type="button" onclick="togglePartition('{{ q_name }}',
+                                '{{ q_data.options|join:'|' }}')">Add Partition
+                        </button>
+                    {% endif %}
+
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endfor %}
+
+    <div>
+        <button id="submit-button" type="submit">Submit</button>
+        <div id="uniqueness-text"></div>
+    </div>
+
+</form>
+
+<p><a href=".." style="font-size: 0.9em">Back to Home Page</a></p>
+
+</body>
+</html>

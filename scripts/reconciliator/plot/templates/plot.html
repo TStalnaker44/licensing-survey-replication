@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Survey Research Utilities</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        #myChart {
+            margin-left: 25px;
+            margin-right: 25px;
+        }
+
+        .downloadButtons{
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form method="post" class="searchOptions">
+    <label for="selected_question">Select Question:</label>
+    <select name="selected_question" id="qidDropdown">
+        {% for question, text in questions %}
+            <option value="{{ question }}">{{ text }}</option>
+        {% endfor %}
+    </select>
+    {% if qtype == 'matrix' %} 
+        <label for="selected-category">Select Category:</label>
+        <select name="selected-category" id="catDropdown">
+            {% for text in categories %}
+                <option value="{{ text }}">{{ text }}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
+    {% if qtype == 'ranked' %}
+        <label for="toggleStacked">Toggle Stacked Bar Plotting?</label>
+        {% if stack %}
+            <input type="checkbox" id="toggleStacked" name="toggleStacked" checked/>
+        {% else %}
+            <input type="checkbox" id="toggleStacked" name="toggleStacked"/>
+        {% endif %}
+    {% endif %}
+
+    <div>
+        <label for="partition">Partition?</label>
+        {% if part %}
+            <input type="checkbox" id="partition" name="partition" checked/>
+        {% else %}
+            <input type="checkbox" id="partition" name="partition"/>
+        {% endif %}
+
+        <label for="part_question">On:</label>
+        <select name="part_question" id="qpartDropdown">
+            {% for question, text in questions %}
+                <option value="{{ question }}">{{ text }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="part_answers"></label>
+        <select name="part_answers" id="apartDropdown">
+            {% for answer in answers %}
+                <option value="{{ answer }}">{{ answer }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+</form>
+
+<div class = "downloadButtons">
+    <button id="downloadPlotPng" style="float: right;">Download Plot as PNG</button>
+    <button id="downloadPlotPdf" style="float: right;">Download Plot as PDF</button>
+</div>
+
+<a href="..">Return Home</a>
+
+<script>
+    document.getElementById('partition').addEventListener('change', function () {
+        if (this.checked) {
+            updateUrl('true', 'part');
+        } else {
+            updateUrl('false', 'part');
+        }
+    });
+    document.getElementById('toggleStacked').addEventListener('change', function () {
+        if (this.checked) {
+            updateUrl('true', 'stack');
+        } else {
+            updateUrl('false', 'stack');
+        }
+    });
+</script>
+
+<script>
+    document.getElementById("qidDropdown").value = "{{qid}}";
+    document.getElementById("qpartDropdown").value = "{{qpart}}";
+    document.getElementById("apartDropdown").value = "{{apart}}";
+    if (document.getElementById("catDropdown")){
+        document.getElementById("catDropdown").value = "{{category}}";
+    }
+    currentUrl = new URL(window.location.href);
+
+    function updateUrl(selectedValue, dropdownId) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(dropdownId, selectedValue);
+        if (selectedValue == "") {
+            currentUrl.searchParams.delete(dropdownId)
+        }
+        window.location.href = currentUrl.href;
+    }
+
+    function handleDropdownChange(event) {
+        const selectedValue = event.target.value;
+        dropdownId = event.target.id;
+        dropdownId = dropdownId.replace("Dropdown", "");
+        updateUrl(selectedValue, dropdownId);
+    }
+
+    const dropdowns = document.querySelectorAll('select');
+    dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', handleDropdownChange);
+    });
+
+
+</script>
+
+<canvas id="myChart" height="{{ height }}"></canvas>
+<script>
+    let data = '{{data}}'
+    data = data.replace(/&#x27;/g, "\"");
+    data = JSON.parse(data);
+
+    let totals = '{{totals}}';
+    totals = JSON.parse(totals);
+
+    let qtype = "{{qtype}}";
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let chart = new Chart(ctx, {
+        type: 'bar',
+
+        data: data,
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Responses'
+                    },
+                    stacked: true
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Counts'
+                    },
+                    stacked: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: '{{qtext}}',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+
+                            if (context.parsed.y !== null) {
+                                elements = context.dataset.data;
+                                total = elements[elements.length - 1]
+                                percent = (context.parsed.x / total * 100).toFixed(2);
+                                label += context.parsed.x + ' (' + percent.toString() + '%)';
+                            }
+                            
+                            return label;
+                        },
+                    }
+                },
+                legend: {
+                    display: qtype === "ranked" // Make conditional based on question type
+                }
+            }
+        }
+    });
+    document.getElementById('downloadPlotPng').addEventListener("click", function () {
+        let plotImage = chart.toBase64Image();
+        const link = document.createElement('a');
+        link.href = plotImage;
+        link.download = '{{qtext}}' + '.png';
+        link.click();
+        });
+
+    document.getElementById('downloadPlotPdf').addEventListener("click", function () {
+        let plotImage = chart.toBase64Image(); 
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF(orientation = "l", unit = "pt", format = "tabloid");
+        pdf.addImage(plotImage, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+        pdf.save('{{qtext}}' + '.pdf');
+        });
+</script>
+</body>
+</html>

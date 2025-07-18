@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>Apply Reconciliation</h1>
+    <form action="{% url 'run_reconciliation' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p>This response coding is for: <b>{{ cur_survey }}</b></p>
+
+        <div style="padding: 1rem">
+            <p>Please upload the reconciliation sheet as a CSV file:</p>
+            <input type="file" id="fileUpload" name="fileUpload"></p>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+
+    </form>
+
+    <p><a href=".." style="font-size: 0.9rem">Back to Home Page</a></p>
+{% endblock %}

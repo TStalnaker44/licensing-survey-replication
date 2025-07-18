@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Remove a survey</h1>
+
+    <form action="{% url 'remove_survey' %}" method="post">
+        {% csrf_token %}
+
+        <div>
+            <label for="survey">Which survey to remove?</label>
+            <select id="survey" name="survey">
+                {% for survey in surveys %}
+                    <option value="{{ survey }}">{{ survey }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="padding-top: 2rem; padding-bottom: 1rem">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <a href=".." style="font-size: 0.9em">Back to Home Page</a></p>
+{% endblock %}

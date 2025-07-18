@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Upload Data Files</h1>
+
+    <form action="{% url 'createDataFile' %}" method="post" , enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p>You are uploading data for the <b>{{ cur_survey }}</b> survey</p>
+
+        <p> Please upload your .csv file: </p>
+        <div style="padding: 1rem">
+            <input type="file" id="fileUpload" name="fileUpload" accept=".csv" required>
+            <p style="color: red; font-weight: bold; font-size: 0.9em">{{ error }}</p>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+
+    </form>
+
+    <p><a href=".." style="font-size: 0.9em">Back to Home Page</a></p>
+{% endblock %}

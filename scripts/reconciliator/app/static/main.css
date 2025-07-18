@@ -1,0 +1,173 @@
+
+
+.codes{
+    border: 2pt solid black;
+    padding: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+body{
+    overflow-y: scroll !important;
+}
+
+
+.strike-through{
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+}
+
+.response_codes{
+    margin: auto;
+    width: 90%;
+    background-color: rgb(225, 225, 225);
+    border-radius: 4px;
+    padding: 5px;
+    text-align: center;
+    border: grey solid 1px;
+    line-height: 2.2em;
+}
+
+#response{
+    margin: auto;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 10pt;
+    border: grey solid 1px;
+    min-height: 5em;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+#question_text{
+    margin: auto;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 10pt;
+    border: grey solid 1px;
+    min-height: 1.5em;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+#left{
+    float: left;
+    width: 70%;
+    border-right: 1px solid #000;
+}
+
+#right{
+    float: right;
+    width: 30%;
+}
+
+#definition{
+    width: 80%;
+    margin: auto;
+    text-align: center;
+    display: block;
+    border: grey solid 1px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    height: 10em;
+}
+
+.container {
+    display: flex;
+}
+
+h1, h2, h3, h4{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#glossary{
+    text-align: center;
+}
+
+#key{
+    margin: auto;
+    margin-top: 5px;
+    width: 80%;
+    text-align: center;
+    margin-bottom: 10pt;
+    border: grey solid 1px;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+#all_codes{
+    margin: auto;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 10pt;
+    padding: 10px;
+    /* margin-block-start: 10px; */
+
+}
+
+#navigation, #easteregg{
+    margin: auto;
+    width: 90%;
+    text-align: center;
+}
+
+#easteregg{
+    margin-top: 10px;
+}
+
+#nextButton, #prevButton, #playButton{
+    padding: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+
+
+.copy-container {
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    margin: auto;
+    margin-bottom: 20px;
+    min-height: 1.25em;
+    width: 90%;
+}
+
+.copy-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.copy-icon {
+    font-size: 20px;
+}
+
+.copy-content {
+    margin-bottom: 10px;
+}
+
+#questionLabel {
+    display: inline-block;
+    margin-right: 10px; /* Adjust this value as needed */
+}
+
+.searchOptions {
+    margin-top: 5px;
+    display: inline-block;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

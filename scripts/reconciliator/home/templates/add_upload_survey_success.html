@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Success!</h1>
+    <p>The <em>{{ survey }}</em> survey has been added and your questions.json has been
+        prepared. </p>
+    <p>You can now run the
+        data analysis tools.</p>
+    <div style="padding: 1rem">
+        <p>Click <a href="../reviewSurveyQuestions/">here</a> to review your generated file</p>
+        <p>Click here to return to the <a href="..">Home Page</a></p>
+    </div>
+    <p>Remember to review the generated file! Some manual edits may be needed.</p>
+    <div style="display: flex; justify-content: center">
+        <div class="rounded-border">
+            <p>IMPORTANT: Question IDs must be unique, even across groups.</p>
+            <p>Be sure to add the <span class="code">contains_pii</span> tag where necessary</p>
+        </div>
+    </div>
+{% endblock %}

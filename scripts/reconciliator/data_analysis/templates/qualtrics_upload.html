@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Prepare Questions File</h1>
+
+    <p>WARNING: If you already have a questions.json for your survey, it will be overwritten!</p>
+
+    <form action="{% url 'createQuestionsFile' %}" method="post" , enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p>Your currently selected survey is: <b>{{ cur_survey }}</b></p>
+
+        <p> Please upload your .qsf file: </p>
+        <div style="padding: 1rem">
+            <input type="file" id="fileUpload" name="fileUpload" accept=".qsf" required/>
+            <p style="color: red; font-weight: bold; font-size: 0.9em">{{ error }}</p>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <p><a href=".." style="font-size: 0.9em">Back to Home Page</a></p>
+{% endblock %}

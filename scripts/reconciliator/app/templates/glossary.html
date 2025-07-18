@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Glossary</title>
+    <style>
+        .term{
+            font-weight: bold;
+        }
+        /* Style for the glossary container */
+        #updatedContent {
+        font-family: Arial, sans-serif;
+        /* max-width: 600px; */
+        margin: 0 auto;
+        padding: 20px;
+        }
+
+        /* Style for the glossary terms */
+        .term {
+        font-weight: bold;
+        color: #336699;
+        }
+
+        /* Style for the glossary list */
+        ul {
+        list-style-type: none;
+        padding: 0;
+        }
+
+        /* Style for glossary list items */
+        li {
+        margin-bottom: 10px;
+        border-left: 3px solid #336699;
+        padding-left: 10px;
+        background-color: #ffffff; /* Default background color */
+        }
+
+        /* Style for the title */
+        h1 {
+        font-family: Arial, sans-serif;
+        color: #336699;
+        margin-bottom: 20px;
+        }
+
+        /* Style for the question section */
+        h2 {
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        }
+
+        /* Style for the dropdown form */
+        .searchOptions {
+        display: inline-block;
+        margin-left: 10px;
+        }
+
+        /* Style for the dropdown */
+        #qidDropdown {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f0f0f0;
+        color: #333;
+        }
+
+        /* Style for dropdown options */
+        #qidDropdown option {
+        background-color: #ffffff;
+        color: #333;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <h1>Glossary</h1>
+    <h2>Question: 
+        <form method="post" class="searchOptions">
+        <select name="selected_question" id="qidDropdown">
+        {% for question in questions %}
+            <option value="{{question}}">{{question}}</option>
+        {% endfor %}
+        </select>
+        </form>
+    </h2>
+
+    <div id="updatedContent">
+        <ul>
+            {% for term in terms %}
+                <li><span class="term">{{term.term}}:</span> {{term.definition}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        document.getElementById("questionDropdown").value = "{{qid}}"
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#qidDropdown').on('change', function() {
+
+                var formData = $('form').serializeArray();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "update_content" %}',
+                    data: formData,
+                    success: function(response) {
+                        $('#updatedContent').html(response.updated_content);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById("qidDropdown").value = "{{qid}}";
+    </script>
+
+    <script>
+        function updateUrl(selectedValue, dropdownId) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(dropdownId, selectedValue);
+        if (selectedValue == ""){
+            currentUrl.searchParams.delete(dropdownId)
+        }
+        history.pushState(null, null, currentUrl.href);
+        }
+    
+        function handleDropdownChange(event) {
+        const selectedValue = event.target.value;
+        dropdownId = event.target.id;
+        dropdownId = dropdownId.replace("Dropdown", "");
+        updateUrl(selectedValue, dropdownId);
+        }
+    
+        const dropdowns = document.querySelectorAll('select');
+        dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', handleDropdownChange);
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+  }
+
+  .confetti {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    border-radius: 10%;
+    animation: fall-rotate 3s ease-in-out infinite; /*, rotate 2s linear infinite;*/
+  }
+
+  @keyframes fall-rotate {
+    0% {
+      transform: translateY(-10vh) rotate(0);
+    }
+    100% {
+      transform: translateY(110vh) rotate(360deg);
+    }
+  }
+
+  .popup {
+    font-family: 'Dancing Script', cursive;
+    display: none;
+    position: fixed;
+    font-size: 80pt;
+    text-align: center;
+    width: 90%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: rgb(255, 215, 0);
+    border-radius: 10px;
+    animation: glow 1.5s alternate infinite; /* Add the glow animation */
+  }
+
+  @keyframes glow {
+    0% {
+      box-shadow: 0px 8px 16px rgb(255, 215, 10);
+    }
+    100% {
+      box-shadow: 0px 8px 32px rgba(255, 215, 10, 0.4);
+    }
+  }

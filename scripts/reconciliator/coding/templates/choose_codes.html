@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Survey Research Utilities</title>
+    <!-- <link rel="stylesheet" href="{% static 'base.css' %}"> -->
+    <style>
+        .option {
+            display: block;
+            font-size: 10pt;
+        }
+
+        .popup {
+            color: rgb(27, 27, 27);
+            border-radius: 6px;
+            border-color: black;
+            border-width: 2px;
+            margin-left: 20px;
+            font-size: 9pt;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<select id="qid" name="questions" onchange="changeQuestion()">
+    {% for question in questions %}
+        <option value="{{ question }}">{{ question }}</option>
+    {% endfor %}
+</select>
+
+
+
+{% for tag, def in codes %}
+    <div class="option">
+        <input type="checkbox" id="tag" name="{{ tag }}">
+        <label class="hover-label" for="{{ tag }}" onclick="showDefinition(this, '{{ def }}')">{{ tag }}
+            <div class="popup"></div>
+        </label>
+    </div>
+{% endfor %}
+
+<button onclick="copyCodes()">Copy Codes</button>
+<button onclick="clearCodes()">Clear</button>
+
+<form action="{% url 'reloadCodes' %}" method="post">
+    {% csrf_token %}
+    <button>Reload</button>
+</form>
+
+Advanced Search: <input type="text" name="term" id="search-bar">
+<button onclick="search()">Go</button>
+
+
+<div id="results"></div>
+
+<form action="{% url 'chooseCodes' %}" method="post" , enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" id="qid" name="qid" value="{{ qid }}">
+    <h4>Need to upload a new .xlsx file?</h4>
+    <p><input type="file" id="fileUpload" name="fileUpload"></p>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+
+<!-- {% if hits %}
+            <p>Search results:</p>
+            {% for hit in hits %}
+                <p>{{hit}}</p>
+            {% endfor %}
+        {% endif %} -->
+
+<script>
+    document.getElementById("qid").value = "{{qid}}";
+</script>
+
+<script>
+    async function search() {
+        searchTerm = document.getElementById("search-bar").value;
+        results = document.getElementById("results");
+        const questionId = '{{qid}}'
+        const response = await fetch(`/searchCodes/${questionId}/${searchTerm}/`);
+        const html = await response.text();
+        results.innerHTML = html;
+    }
+</script>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function () {
+            console.log('Copying to clipboard was successful!');
+        }, function (err) {
+            console.error('Could not copy text: ', err);
+        });
+    }
+
+    function processCode(code) {
+        if (code.includes("'")) {
+            return '"' + code + '"';
+        } else {
+            return "'" + code + "'";
+        }
+    }
+
+    function copyCodes() {
+        checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        codes = [];
+        for (i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                // codes.push(processCode(checkboxes[i].name));
+                codes.push(checkboxes[i].name);
+            }
+        }
+        // copyToClipboard("[" + codes.join(",") + "]");
+        copyToClipboard(codes.join(", ")); // This is the new standard format
+    }
+
+    function clearCodes() {
+        checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        for (i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = false;
+        }
+    }
+</script>
+
+<script>
+
+    function updateUrl(selectedValue, dropdownId) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(dropdownId, selectedValue);
+        if (selectedValue == "") {
+            currentUrl.searchParams.delete(dropdownId)
+        }
+        window.location.href = currentUrl.href;
+    }
+
+    function handleDropdownChange(event) {
+        const selectedValue = event.target.value;
+        dropdownId = event.target.id;
+        dropdownId = dropdownId.replace("Dropdown", "");
+        updateUrl(selectedValue, dropdownId);
+    }
+
+    const dropdowns = document.querySelectorAll('select');
+    dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', handleDropdownChange);
+    });
+
+</script>
+
+<script>
+    function showDefinition(label, def) {
+        const popup = label.querySelector('.popup');
+        if (popup.innerHTML === "") {
+            popup.innerHTML = def;
+            popup.style.padding = "5px";
+        } else {
+            popup.innerHTML = "";
+            popup.style.padding = "0px";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'base.css' %}">
+        <style>
+            .id-column{
+                width: 100px;
+            }
+            .content{
+                width: 200px;
+            }
+            table{
+                margin: auto;
+                margin-top: 30px;
+            }
+            th, td {
+                border: 1px solid black;
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Add/Remove Invalid Responses from List</h2>
+        {% if invalid|length == 0 %}
+            <p>There are currently no responses marked as invalid.</p>
+        {% else %}
+            <p>There are currently {{invalid|length}} responses marked as invalid.</p>
+        {% endif %}
+
+        <p><a href="..">Back to Home Page</a></p>
+
+        <form action="{% url 'addInvalid' %}" method="post" , enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label for="add_invalid">Add Invalid Response: </label>
+            <input type="number" id="add_invalid" name="add_invalid">
+            <br/>
+            <label for="text">Reason: </label>
+            <input type="text" id="add_explanation" name="add_explanation">
+            <button type="submit" onclick="submitList()">Add to List</button>
+
+            <input type="hidden" name="list_data" id="list_data">
+
+        </form>
+
+        {% if invalid|length > 0 %}
+        <form action="{% url 'removeInvalid' %}" method="post" , enctype="multipart/form-data">
+            {% csrf_token %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>JSON ID</th>
+                        <th>Qualtrics ID</th>
+                        <th>Explanation</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in invalid.items %}
+                        <tr>
+                            <td class="id-column">{{key}}</td>
+                            <td class="content">{{value.qualtrics}}</td>
+                            <td class="content">{{value.reason}}</td>
+                            <td><button type="submit" onclick="markRemove({{key}})">🗑️</button></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <input type="hidden" name="list_data2" id="list_data2">
+            <input type="hidden" name="remove" id="remove">
+        </form>
+        {% endif %}
+
+        <script>
+            // This function will be called when the form is submitted
+            function submitList() {
+                // Get the list from the Django context
+                var list = {{ invalid|safe }};  // Use the |safe filter to inject the list into JavaScript
+        
+                // Convert the list to a JSON string and store it in the hidden input
+                document.getElementById('list_data').value = JSON.stringify(list);
+            }
+
+            function markRemove(remove) {
+                // Get the list from the Django context
+                var list = {{ invalid|safe }};  // Use the |safe filter to inject the list into JavaScript
+        
+                // Convert the list to a JSON string and store it in the hidden input
+                document.getElementById('list_data2').value = JSON.stringify(list);
+                document.getElementById('remove').value = remove;
+            }
+        </script>
+    </body>
+</html>

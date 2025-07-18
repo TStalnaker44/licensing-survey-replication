@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Coding Tool</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+
+        .right-panel {
+            padding: 20px;
+            float: right;
+        }
+
+        .left-panel {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+        }
+
+        .right-panel {
+            border-right: none;
+        }
+
+        .question-dropdown {
+            float: left;
+            overflow: hidden;
+        }
+
+        .participant {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            align-items: center;
+            width: 90%;
+            height: 250px;
+            margin: 10px;
+        }
+
+        .participant p {
+            margin: 10px;
+            text-align: center;
+            vertical-align: middle;
+            overflow-y: auto;
+        }
+
+        .response {
+            border: 100% solid;
+            width: 100%;
+            height: 100%;
+            margin: 10px;
+
+        }
+
+        .response-group {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .responses {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .response p {
+            margin: 5px 0;
+            text-align: left;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            padding-top: 0px;
+            margin-bottom: 20px;
+            bottom: 10px;
+            width: 90%;
+        }
+
+        .code-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .code-option input {
+            margin-right: 10px;
+        }
+
+        #code-options {
+            margin-bottom: 20px;
+            height: 15%;
+            overflow-y: scroll;
+            background-color: #f1f1f1;
+        }
+
+        .codes-selected {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            width: 90%;
+        }
+
+        .codes-selected p {
+            margin: 0;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-section input[type="text"] {
+            padding: 5px;
+            width: 200px;
+        }
+
+        .add-code {
+            bottom: 10px;
+        }
+
+        .description {
+            bottom: 0px;
+        }
+
+        .description input[type="text"] {
+            padding: 5px;
+            width: 200px;
+        }
+
+        #qid {
+            background-color: #f1f1f1;
+        }
+
+        /* Dropdown Button */
+        .dropbtn {
+            background-color: #f1f1f1;
+            color: rgb(3, 3, 3);
+            padding: 16px;
+            font-size: 16px;
+            width: 100%;
+            border: none;
+            margin: 10px;
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width: 86%;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            width: 1000px;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Current coder: {{ coder }}</h2>
+    <!-- Main content: Participant responses on the left, code selection on the right -->
+    <div class="main-content">
+        <!-- Left Panel: Participant responses and navigation -->
+        <div class="left-panel">
+
+            <h2>Questions</h2>
+
+            <h2>Open Coding Tool</h2>
+
+
+            <!-- Dropdown select menu -->
+            <select id="qid" name="questions" onchange="changeQuestion()">
+                {% for question_id, question_text in valid_questions %}
+                    <option value="{{ question_id }}"
+                            data-question-text="{{ question_text }}">{{ question_id }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Dropdown button with question text -->
+            <div class="dropdown">
+                <button id="questionButton" class="dropbtn">Select a question</button>
+                <div class="dropdown-content">
+                    {% for question_id, question_text in valid_questions %}
+                        <a href="#" data-question-id="{{ question_id }}"
+                           onclick="setQuestionText('{{ question_id }}', '{{ question_text }}')">{{ question_text }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Display responses by question and participant -->
+            <div class="responses">
+                {% for question_id, responses in response_data.items %}
+                    <div class="response-group" data-question-id="{{ question_id }}" style="display: none;">
+                        {% for participant_id, responses_list in responses.items %}
+                            <div class="participant">
+                                <p>Participant: {{ participant_id }}</p>
+                                <hr>
+                                <div class="response">
+                                    {% for response in responses_list %}
+                                        {{ response }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Display selected codes -->
+            <div class="codes-selected">
+                <p>Codes selected:</p>
+                <p id="selected-codes">None</p>
+            </div>
+
+            <!-- Participant Navigation Controls -->
+            <div class="navigation">
+                <button onclick="navigatePrevious()">Previous</button>
+                <button onclick="navigateNext()">Next</button>
+            </div>
+
+
+        </div>
+
+        <!-- Right Panel: Code selection, advanced search, and selected codes -->
+        <div class="right-panel">
+            <h2>Codebook</h2>
+
+            <!-- Advanced Search Section -->
+            <div class="search-section">
+                <h3>Search codes</h3>
+                <input type="text" id="search-bar" placeholder="Search term">
+                <button onclick="search()">Go</button>
+                <button onclick="clearSearch()">Clear</button>
+            </div>
+
+            <!-- Search results display -->
+            <div id="results"></div>
+
+            <!-- Dynamically generated code checkboxes -->
+            <div id="code-options">
+                {% for question_id, question_codes in codes.items %}
+                    <div class="question-codes" data-question-id="{{ question_id }}" style="display: none;">
+                        {% for code, description in question_codes.items %}
+                            <div id="code-{{ question_id }}-{{ code }}">
+                                <input type="checkbox" id="code-{{ question_id }}-{{ code }}" value="{{ code }}">
+                                <label for="code-{{ question_id }}-{{ code }}"
+                                       title="{{ description }}">{{ code }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Add Code Section -->
+            <div class="add-code"></div>
+
+            <form action="{% url 'open_coding' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="form_question_id" name="question_id" value="">
+                <h3>Add code</h3>
+                <input type="text" id="add-code-bar" name="code_name" placeholder="Code name" required>
+                <br>
+                <textarea type="text" id="description-bar" name="code_description" placeholder="Description"
+                          style="width: 155px; height: 70px; resize: vertical; padding: 5px; font-family: inherit;"
+                          required></textarea>
+                <br>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+
+
+    </div>
+    <p><a href="..">Home</a></p>
+</div>
+</div>
+
+<script>
+
+    function copyCodes() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const selectedCodes = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.name);
+        document.getElementById("selected-codes").innerText = selectedCodes.join(", ") || "None";
+    }
+
+    function clearCodes() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = false);
+        document.getElementById("selected-codes").innerText = "None";
+    }
+
+    function search() {
+        const searchTerm = document.getElementById("search-bar").value;
+        document.getElementById("results").innerText = "Searching for: " + searchTerm;
+        // Get the container for the specific question's codes
+        const selectElement = document.getElementById("qid");
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const questionId = selectedOption.value;
+        const codesContainer = document.querySelector(`.question-codes[data-question-id="${questionId}"]`);
+
+        if (!codesContainer) {
+            console.error(`No codes found for question ID: ${questionId}`);
+            return;
+        }
+
+        // Get all code divs for the question
+        const codeDivs = codesContainer.querySelectorAll('div[id^="code-"]');
+
+        // Convert input to lowercase for case-insensitive search
+        const lowercaseInput = searchTerm.toLowerCase();
+
+        // Flag to check if any matches were found
+        let matchFound = false;
+
+        // Iterate through each code div
+        codeDivs.forEach(codeDiv => {
+            console.log(codeDiv);
+            const checkbox = codeDiv.querySelector('input[type="checkbox"]');
+            const label = codeDiv.querySelector('label');
+            const codeValue = checkbox.value.toLowerCase();
+            const codeLabel = label.textContent.toLowerCase();
+
+            // Check if the input matches the code or its description
+            if (lowercaseInput === '' || codeValue.includes(lowercaseInput) || codeLabel.includes(lowercaseInput)) {
+                codeDiv.style.display = ''; // Show the div
+                matchFound = true;
+            } else {
+                codeDiv.style.display = 'none'; // Hide the div
+            }
+        });
+
+        // Display a message if no matches were found
+        if (!matchFound) {
+            console.log(`No matching codes found for "${searchTerm}" in question ${questionId}`);
+        }
+    }
+
+
+    function clearSearch() {
+        document.getElementById("search-bar").value = "";
+        document.getElementById("results").innerText = "";
+
+        //Reset container to show all codes again
+        const selectElement = document.getElementById("qid");
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const questionId = selectedOption.value;
+        const codesContainer = document.querySelector(`.question-codes[data-question-id="${questionId}"]`);
+        const codeDivs = codesContainer.querySelectorAll('div[id^="code-"]');
+
+        codeDivs.forEach(codeDiv => {
+            codeDiv.style.display = '';
+        });
+
+    }
+
+    let currentParticipantIndex = 0;
+
+    function navigatePrevious() {
+        const selectedQuestionId = document.getElementById("qid").value;
+        const responseGroups = document.querySelectorAll(`.response-group[data-question-id="${selectedQuestionId}"] .participant`);
+
+        // Decrease index and wrap around if needed
+        currentParticipantIndex = (currentParticipantIndex - 1 + responseGroups.length) % responseGroups.length;
+        updateDisplayedParticipant(responseGroups);
+    }
+
+    function navigateNext() {
+        const selectedQuestionId = document.getElementById("qid").value;
+        const responseGroups = document.querySelectorAll(`.response-group[data-question-id="${selectedQuestionId}"] .participant`);
+
+        // Increase index and wrap around if needed
+        currentParticipantIndex = (currentParticipantIndex + 1) % responseGroups.length;
+        updateDisplayedParticipant(responseGroups);
+    }
+
+    function updateDisplayedParticipant(responseGroups) {
+        // Hide all participants and show only the selected one
+        responseGroups.forEach((participant, index) => {
+            participant.style.display = index === currentParticipantIndex ? "block" : "none";
+        });
+    }
+
+    let currentQuestionId = null; // Declare a variable to store the current question ID
+
+    function changeQuestion() {
+        // Update button text based on selected question
+        const selectElement = document.getElementById("qid");
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const questionId = selectedOption.value;
+        const questionText = selectedOption.getAttribute("data-question-text");
+
+        const button = document.getElementById("questionButton");
+        button.innerHTML = questionText;
+
+        // Show only the response group for the selected question
+        document.querySelectorAll('.response-group').forEach(group => {
+            group.style.display = group.getAttribute('data-question-id') === questionId ? 'block' : 'none';
+        });
+
+        // Reset participant index and display the first participant
+        currentParticipantIndex = 0;
+        const responseGroups = document.querySelectorAll(`.response-group[data-question-id="${questionId}"] .participant`);
+        updateDisplayedParticipant(responseGroups);
+
+        // Update the hidden input with the selected question_id
+        document.getElementById("form_question_id").value = questionId;
+
+        // Set the current question ID
+        currentQuestionId = questionId;
+
+        // Trigger a function to update the displayed codes
+        updateDisplayedCodes();
+    }
+
+    function updateDisplayedCodes() {
+        // Hide all code divs
+        document.querySelectorAll('.question-codes').forEach(div => {
+            div.style.display = 'none';
+        });
+
+        // Show codes for the current question
+        const currentCodeDiv = document.querySelector(`.question-codes[data-question-id="${currentQuestionId}"]`);
+        if (currentCodeDiv) {
+            currentCodeDiv.style.display = 'block';
+        }
+    }
+
+    function setQuestionText(questionId, questionText) {
+        const button = document.getElementById("questionButton");
+        button.innerHTML = questionText;
+
+        const selectElement = document.getElementById("qid");
+        const options = selectElement.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === questionId) {
+                options[i].selected = true;
+                break;
+            }
+        }
+
+        changeQuestion(); // Call to update the displayed responses
+    }
+
+    window.onload = function () {
+        changeQuestion(); // Initialize the display based on the selected question
+    };
+
+</script>
+
+</body>
+</html>

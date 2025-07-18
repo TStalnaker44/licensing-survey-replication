@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Upload Coder File</h1>
+
+    <p>Insert instructions for getting coder file here</p>
+
+    <form action="{% url 'createCoderFile' %}" method="post" , enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p>You are uploading data for: <b>{{ cur_survey }}</b></p>
+
+        <p>Which coder is this for?</p>
+        <input type="number" id="coder" name="coder" min="1" value="1">
+
+        <p> Please upload your .csv file: </p>
+        <div style="padding: 1rem">
+            <input type="file" id="fileUpload" name="fileUpload" accept=".csv" required/>
+            <p style="color: red; font-weight: bold; font-size: 0.9em">{{ error }}</p>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+
+    </form>
+
+    <p><a href="..">Back to Home Page</a></p>
+{% endblock %}

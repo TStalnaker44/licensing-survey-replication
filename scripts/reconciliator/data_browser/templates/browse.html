@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .response {
+                margin: 10px;
+                padding: 10px;
+                border: 1px solid black;
+            }
+            .pid {
+                font-weight: bold;
+            }
+            .resp_text {
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <form method="post" class="searchOptions">
+            <div>Question: 
+                <select name="selected_question" id="qidDropdown">
+                    {% for question, text in questions.items %}
+                        <option value="{{question}}">{{question}} - {{text}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div>Code: 
+                <select name="selected_code" id="codeDropdown">
+                    {% for cid, code, count in codes %}
+                        <option value="{{cid}}">{{code}} ({{count}})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <a href="..">Return Home</a>
+
+        <script>
+            document.getElementById("qidDropdown").value = "{{qid}}";
+            document.getElementById("codeDropdown").value = "{{code}}";
+            currentUrl = new URL(window.location.href);
+
+            function updateUrl(selectedValue, dropdownId) {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set(dropdownId, selectedValue);
+                if (selectedValue == ""){
+                    currentUrl.searchParams.delete(dropdownId)
+                }
+                window.location.href = currentUrl.href; 
+            }
+
+            function handleDropdownChange(event) {
+                const selectedValue = event.target.value;
+                dropdownId = event.target.id;
+                dropdownId = dropdownId.replace("Dropdown", "");
+                updateUrl(selectedValue, dropdownId);
+            }
+
+            const dropdowns = document.querySelectorAll('select');
+            dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('change', handleDropdownChange);
+        });
+        </script>
+
+        <div>
+            {% for pid, resp in responses.items %}
+                <div class="response">
+                    <div class="pid">Resp {{pid}}:</div>
+                    <div class="resp_text">{{resp|linebreaks}}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>

@@ -1,0 +1,90 @@
+body {
+    padding: 1rem;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+
+ul, ol {
+    list-style-type: none;
+    padding: 0;
+    line-height: 1.25;
+}
+
+input:not([type="file"]), select {
+    padding: 0.25rem;
+    border-radius: 6px;
+    margin-top: 0.25rem;
+    border: 1px solid gray;
+}
+
+button, input::file-selector-button {
+    border-radius: 6px;
+    border: 1px solid gray;
+    padding: 0.3rem 0.6rem;
+}
+
+button:not(:disabled), input::file-selector-button {
+    cursor: pointer;
+}
+
+button:not(:disabled):not(:hover), input::file-selector-button:not(:hover) {
+    background: none;
+}
+
+
+a, a:visited {
+    color: #005df5;
+}
+
+.code {
+    background-color: lightgray;
+    padding: 0.25rem;
+    font-family: monospace;
+    border-radius: 4px;
+}
+
+.rounded-border {
+    border: 1px solid lightgray;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+}
+
+.categories {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.categories > div {
+    flex: 1 1 0;
+    width: 0;
+    max-width: 400px;
+    border: 1px solid lightgray;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+
+.categories h4 {
+    font-size: 1.3em;
+}
+
+.placeholder {
+    font-size: 1.15em;
+    margin-top: 4rem;
+}
+
+.upload-survey-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#survey_title {
+    padding: 0.25rem;
+    border-radius: 6px;
+    margin-top: 0.25rem;
+    text-align: center;
+}

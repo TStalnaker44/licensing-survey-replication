@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Survey Research Utilities</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #0654f0;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .data-field {
+            text-align: right;
+        }
+
+        .question {
+            text-indent: 25px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form method="post" class="searchOptions">
+    <div>Showing:
+        <select name="selected_question" id="qidDropdown">
+            {% for question, text in questions %}
+                <option value="{{ question }}">{{ text }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>Splitting on:
+        <select name="part_question" id="qpartDropdown">
+            {% for question, text in questions %}
+                <option value="{{ question }}">{{ text }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<script>
+    document.getElementById("qidDropdown").value = "{{report.question.qid}}";
+    document.getElementById("qpartDropdown").value = "{{report.partition.question.qid}}";
+    currentUrl = new URL(window.location.href);
+
+    function updateUrl(selectedValue, dropdownId) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(dropdownId, selectedValue);
+        if (selectedValue == "") {
+            currentUrl.searchParams.delete(dropdownId)
+        }
+        window.location.href = currentUrl.href;
+    }
+
+    function handleDropdownChange(event) {
+        const selectedValue = event.target.value;
+        dropdownId = event.target.id;
+        dropdownId = dropdownId.replace("Dropdown", "");
+        updateUrl(selectedValue, dropdownId);
+    }
+
+    const dropdowns = document.querySelectorAll('select');
+    dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', handleDropdownChange);
+    });
+</script>
+
+<table>
+    <tr>
+        <td>Response</td>
+        {% for label in report.question.answers %}
+            <td>{{ label }}</td>
+        {% endfor %}
+    </tr>
+
+    {% for answer, data in report.partition.results.items %}
+        <tr>
+            <td>{{ answer }}</td>
+            {% for label, info in data.items %}
+                <td>{{ info.count }}<br>({{ info.percent }}%)</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+<a href="..">Return Home</a>
+</body>
+</html>

@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Reconciliator</title>
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link rel="stylesheet" href="{% static 'celebrate.css' %}">
+    <script src="{% static 'celebrate.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        {% for key, color in coder_colors.items %}
+            .{{key}} {
+                background-color: {{color}};
+            }
+        {% endfor %}
+    </style>
+</head>
+<body>
+
+    <div class="confetti-container"></div>
+    <div id="popup" class="popup">Reconciliation Complete!</div>
+
+    <h1>----- The Grand Reconciliator -----</h1>
+
+    <hr>
+    
+    <div class="container">
+    <div id="left">
+
+    <div class="center">
+        <h3 id="questionLabel">Question</h3> 
+        <form method="post" class="searchOptions">
+            <select name="selected_question" id="qidDropdown">
+            {% for question in questions %}
+                <option value="{{question}}">{{question}}</option>
+            {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div id="question_text">{{question_text}}</div>
+
+    <div class="center">
+        <h3 id="questionLabel">Response</h3> 
+        <form method="post" class="searchOptions">
+            <select name="selected_pid" id="pidDropdown">
+            {% for respid in pids %}
+                <option value="{{respid}}">{{respid}}</option>
+            {% endfor %}
+            </select>
+        </form>
+    </div>
+    <div id="response">{{response.response|linebreaks}}</div>
+
+    <div class="popup" id="popup"></div>
+
+    <h3>Response Codes</h3>
+    <div class="response_codes">
+        {% for key, value in codes.items %}
+            {% for code in value %}
+                <span class="codes {{key}} clickable-span hover-text" data-content-id="{{code}}">{{code}}</span>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <h4>Key</h4>
+    <div id="key">
+        {% for key, value in coder_labels.items %}
+            <span class="codes {{key}}">{{value}}</span>
+        {% endfor %}
+    </div>
+
+    <h3>Final Codes</h3>
+    <div class="copy-container">
+        <div id="all_codes" class="copy-content"></div>
+        <button class="copy-button" onclick="copyToClipboard()">
+            <span class="copy-icon">📋</span>
+        </button>
+    </div>
+
+    
+
+    <div id="navigation">
+        {% if pid != start_pid %}
+        <button id="prevButton">Previous Response</button>
+        {% endif %}
+        {% if pid != final_pid%}
+        <button id="nextButton">Next Response</button>
+        {% endif %}
+    </div>
+
+    <div id="easteregg">
+        <button id="playButton">🎺🎉🥳</button>
+        <audio id="audioPlayer">
+            <source src="{% static 'fanfare.m4a' %}" type="audio/mp3">
+        </audio>
+    </div>
+
+    <p style="text-align: center;"><a href="..">Back to Home Page</a></p>
+
+    </div>
+
+
+    <div id="right">
+    <h2>Quick Dictionary</h2>
+    <div id="glossary"><a href="/glossary?qid={{qid}}" target="_blank">Full Glossary</a></div>
+    <div id="definition"></div>
+    </div>
+    </div>
+
+
+
+    <script>
+
+        function advanceToNext(){
+            // Redirect to a new page when the button is clicked
+            currentUrl = new URL(window.location.href);
+            pid = parseInt("{{pid}}")
+            pids = "{{valid_pids}}".split("-")
+            pids = pids.map(str => parseInt(str));
+            index = pids.indexOf(pid);
+            currentUrl.searchParams.set("pid", pids[index+1]);
+            window.location.href = currentUrl.href;
+        }
+
+        function returnToPrevious(){
+            // Redirect to a new page when the button is clicked
+            currentUrl = new URL(window.location.href);
+            pid = parseInt("{{pid}}")
+            pids = "{{valid_pids}}".split("-")
+            pids = pids.map(str => parseInt(str));
+            index = pids.indexOf(pid)
+            currentUrl.searchParams.set("pid", pids[index-1]);
+            window.location.href = currentUrl.href;
+        }
+
+        document.addEventListener('keydown', function(event){
+            if (event.key === "ArrowRight"){
+                advanceToNext();
+            }
+            else if (event.key === "ArrowLeft"){
+                returnToPrevious();
+            }
+        });
+
+        // Get a reference to the button element
+        const nextButton = document.getElementById('nextButton');
+        const prevButton = document.getElementById('prevButton');
+        const allCodes = document.getElementById('all_codes');
+
+        // Add a click event listener to the button
+        if (nextButton){
+            nextButton.addEventListener('click', advanceToNext);
+        }
+        // Add a click event listener to the button
+        if (prevButton){
+            prevButton.addEventListener('click', returnToPrevious);
+        }
+
+        function displayCodes(){
+            text_codes = []
+            for (let i = 0; i < codes.length; i++){
+                if (codes[i].includes("'")){
+                    text_codes.push('"' + codes[i] + '"');
+                }
+                else{
+                    text_codes.push("'" + codes[i] + "'");
+                }
+            }
+            allCodes.textContent = "[" + text_codes.join(", ") + "]";
+        }
+
+        // Replace apostrophes and split codes into array
+        codes = "{{all_codes}}".replace(/&#x27;/g, "'").split("|");
+        displayCodes();
+
+        // Get all the span elements with the class "clickable-span"
+        const clickableSpans = document.querySelectorAll('.clickable-span');
+
+        // Add a click event listener to each span
+        clickableSpans.forEach(span => {
+            span.addEventListener('click', function() {
+                // Get the content of the clicked span
+                const clickedText = span;
+
+                // Call a function with the clicked content
+                yourFunction(clickedText);
+            });
+        });
+
+        // Your function to handle the clicked content
+        function yourFunction(clickedText) {
+            text = clickedText.textContent
+            if (codes.includes(text)){
+                const indexToRemove = codes.indexOf(text);
+                if (indexToRemove !== -1) {
+                    codes.splice(indexToRemove, 1);
+                    displayCodes();
+                    clickedText.classList.add("strike-through")
+                }
+            }
+            else{
+                codes.push(text);
+                displayCodes();
+                clickedText.classList.remove("strike-through")
+            }
+        }
+
+    </script>
+
+
+    <script>
+        const textElements = document.querySelectorAll('.hover-text');
+        const definition = document.getElementById('definition');
+
+        textElements.forEach(element => {
+            element.addEventListener('mouseenter', async (event) => {
+                const contentId = element.dataset.contentId;
+                const questionId = '{{qid}}'
+                const response = await fetch(`/get_popup_content/${questionId}/${contentId}/`);
+                const html = await response.text();
+                definition.innerHTML = html;
+            
+            });
+            element.addEventListener('mouseout', async (event) => {
+                definition.innerHTML = "";
+            
+            });
+
+        });
+
+    </script>
+
+    <script>
+        function copyToClipboard() {
+            const copyText = document.querySelector('.copy-content');
+            const textArea = document.createElement('textarea');
+            textArea.value = copyText.innerText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Optionally provide some feedback to the user
+            const copyButton = document.querySelector('.copy-button');
+            copyButton.innerHTML = '<span class="copy-icon">✅</span>';
+            setTimeout(() => {
+                copyButton.innerHTML = '<span class="copy-icon">📋</span>';
+            }, 1000);
+        }
+
+    </script>
+
+    <script>
+        document.getElementById("qidDropdown").value = "{{qid}}";
+        document.getElementById("pidDropdown").value = "{{pid}}";
+        currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("{{pid}}", "pid");
+    </script>
+
+    <script>
+        function updateUrl(selectedValue, dropdownId) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(dropdownId, selectedValue);
+        if (selectedValue == ""){
+            currentUrl.searchParams.delete(dropdownId)
+        }
+        // currentUrl.searchParams.delete("pid")
+        window.location.href = currentUrl.href; 
+        }
+
+        function handleDropdownChange(event) {
+            const selectedValue = event.target.value;
+            dropdownId = event.target.id;
+            dropdownId = dropdownId.replace("Dropdown", "");
+            updateUrl(selectedValue, dropdownId);
+        }
+
+        const dropdowns = document.querySelectorAll('select');
+        dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', handleDropdownChange);
+        });
+
+    </script>
+
+
+</body>
+</html>

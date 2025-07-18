@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Add and Upload Survey</h1>
+    <form action="{% url 'add_upload_survey' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p> What would you like to name your survey?
+            <input type="text" id="new_survey" name="new_survey" required></p>
+
+
+        <p style="color: red">WARNING: If you already have a questions.json for your survey, it will be overwritten!</p>
+        <p> Please upload your .qsf file: </p>
+        <div style="padding: 1rem">
+            <input type="file" id="fileUpload" name="fileUpload" accept=".qsf" required/>
+            <p style="color: red; font-weight: bold; font-size: 0.9em">{{ error }}</p>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    <p><a href=".." style="font-size: 0.9em">Back to Home Page</a></p>
+{% endblock %}

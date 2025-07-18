@@ -1,0 +1,456 @@
+{
+    "Consent": {
+        "CF2": {
+            "question": "<strong><span style=\"font-size:19px;\">YOU ARE MAKING A DECISION WHETHER OR NOT TO PARTICIPATE. IF YOU WANT TO PARTICIPATE, PLEASE SELECT THE YES OPTION BELOW, AND START THE SURVEY.</span></strong>",
+            "type": "single-select",
+            "qual_name": "CF2",
+            "options": [
+                "Yes",
+                "No"
+            ],
+            "contains_pii": true
+        }
+    },
+    "Demographics": {
+        "D0": {
+            "question": "In which country do you currently reside?",
+            "type": "multi-select",
+            "qual_name": "country",
+            "options": [
+                "Afghanistan",
+                "Albania",
+                "Algeria",
+                "Andorra",
+                "Angola",
+                "Antigua and Barbuda",
+                "Argentina",
+                "Armenia",
+                "Australia",
+                "Austria",
+                "Azerbaijan",
+                "Bahamas",
+                "Bahrain",
+                "Bangladesh",
+                "Barbados",
+                "Belarus",
+                "Belgium",
+                "Belize",
+                "Benin",
+                "Bhutan",
+                "Bolivia",
+                "Bosnia and Herzegovina",
+                "Botswana",
+                "Brazil",
+                "Brunei Darussalam",
+                "Bulgaria",
+                "Burkina Faso",
+                "Burundi",
+                "Cambodia",
+                "Cameroon",
+                "Canada",
+                "Cape Verde",
+                "Central African Republic",
+                "Chad",
+                "Chile",
+                "China",
+                "Colombia",
+                "Comoros",
+                "Congo, Republic of the...",
+                "Costa Rica",
+                "Côte d'Ivoire",
+                "Croatia",
+                "Cuba",
+                "Cyprus",
+                "Czech Republic",
+                "Democratic Republic of the Congo",
+                "Denmark",
+                "Djibouti",
+                "Dominica",
+                "Dominican Republic",
+                "Ecuador",
+                "Egypt",
+                "El Salvador",
+                "Equatorial Guinea",
+                "Eritrea",
+                "Estonia",
+                "Ethiopia",
+                "Fiji",
+                "Finland",
+                "France",
+                "Gabon",
+                "Gambia",
+                "Georgia",
+                "Germany",
+                "Ghana",
+                "Greece",
+                "Grenada",
+                "Guatemala",
+                "Guinea",
+                "Guinea-Bissau",
+                "Guyana",
+                "Haiti",
+                "Honduras",
+                "Hong Kong (S.A.R.)",
+                "Hungary",
+                "Iceland",
+                "India",
+                "Indonesia",
+                "Iran",
+                "Iraq",
+                "Ireland",
+                "Israel",
+                "Italy",
+                "Jamaica",
+                "Japan",
+                "Jordan",
+                "Kazakhstan",
+                "Kenya",
+                "Kiribati",
+                "Kuwait",
+                "Kyrgyzstan",
+                "Lao People's Democratic Republic",
+                "Latvia",
+                "Lebanon",
+                "Lesotho",
+                "Liberia",
+                "Libyan Arab Jamahiriya",
+                "Liechtenstein",
+                "Lithuania",
+                "Luxembourg",
+                "Madagascar",
+                "Malawi",
+                "Malaysia",
+                "Maldives",
+                "Mali",
+                "Malta",
+                "Marshall Islands",
+                "Mauritania",
+                "Mauritius",
+                "Mexico",
+                "Micronesia, Federated States of...",
+                "Monaco",
+                "Mongolia",
+                "Montenegro",
+                "Morocco",
+                "Mozambique",
+                "Myanmar",
+                "Namibia",
+                "Nauru",
+                "Nepal",
+                "Netherlands",
+                "New Zealand",
+                "Nicaragua",
+                "Niger",
+                "Nigeria",
+                "North Korea",
+                "Norway",
+                "Oman",
+                "Pakistan",
+                "Palau",
+                "Panama",
+                "Papua New Guinea",
+                "Paraguay",
+                "Peru",
+                "Philippines",
+                "Poland",
+                "Portugal",
+                "Qatar",
+                "Republic of Moldova",
+                "Romania",
+                "Russian Federation",
+                "Rwanda",
+                "Saint Kitts and Nevis",
+                "Saint Lucia",
+                "Saint Vincent and the Grenadines",
+                "Samoa",
+                "San Marino",
+                "Sao Tome and Principe",
+                "Saudi Arabia",
+                "Senegal",
+                "Serbia",
+                "Seychelles",
+                "Sierra Leone",
+                "Singapore",
+                "Slovakia",
+                "Slovenia",
+                "Solomon Islands",
+                "Somalia",
+                "South Africa",
+                "South Korea",
+                "Spain",
+                "Sri Lanka",
+                "Sudan",
+                "Suriname",
+                "Swaziland",
+                "Sweden",
+                "Switzerland",
+                "Syrian Arab Republic",
+                "Tajikistan",
+                "Thailand",
+                "The former Yugoslav Republic of Macedonia",
+                "Timor-Leste",
+                "Togo",
+                "Tonga",
+                "Trinidad and Tobago",
+                "Tunisia",
+                "Turkey",
+                "Turkmenistan",
+                "Tuvalu",
+                "Uganda",
+                "Ukraine",
+                "United Arab Emirates",
+                "United Kingdom of Great Britain and Northern Ireland",
+                "United Republic of Tanzania",
+                "United States of America",
+                "Uruguay",
+                "Uzbekistan",
+                "Vanuatu",
+                "Venezuela, Bolivarian Republic of...",
+                "Viet Nam",
+                "Yemen",
+                "Zambia",
+                "Zimbabwe"
+            ],
+            "contains_pii": true
+        },
+        "D1": {
+            "question": "How many years of experience in software development do you have?",
+            "type": "single-text",
+            "qual_name": "D1",
+            "convert_to_range": true
+        },
+        "D2": {
+            "question": "Please indicate which domains you have developed software for (e.g., banking or healthcare).",
+            "type": "single-text",
+            "qual_name": "D2"
+        },
+        "D3": {
+            "question": "How would you describe your primary role?",
+            "type": "single-select-with-other",
+            "qual_name": "D3",
+            "options": [
+                "Programmer",
+                "Tester",
+                "Project Technical Lead",
+                "Project Manager",
+                "IT Manager",
+                "Consultant",
+                "Educator",
+                "Researcher",
+                "Legal Expert",
+                "Analyst",
+                "Software Architect",
+                "Other (please specify)"
+            ]
+        },
+        "D4": {
+            "question": "Which of the following describes the nature of your employment? (Select all that apply.)",
+            "type": "multi-select-with-other",
+            "qual_name": "D4",
+            "options": [
+                "I develop software on my own time / I am a hobbyist",
+                "I am paid to develop software and work for a company",
+                "I am paid to develop software and work for various clients (e.g., freelancer)",
+                "I am a researcher at an educational institution",
+                "Other (please explain)"
+            ]
+        },
+        "D5": {
+            "question": "Which of the following describe the types of projects that you have worked on? (Select all that apply.)",
+            "type": "multi-select",
+            "qual_name": "D5",
+            "options": [
+                "Open source projects that don't rely on third-party components/dependencies",
+                "Open source projects that rely on third-party components/dependencies",
+                "Proprietary software"
+            ]
+        },
+        "D6": {
+            "question": "Do you have training or education in software licensing? If so, is that training or education formal (e.g., college classes, degree, or a certification) or informal (self-learning, employer-provided, or other training)?",
+            "type": "single-select",
+            "qual_name": "D6",
+            "options": [
+                "Yes, formal",
+                "Yes, informal",
+                "Yes, both formal and informal",
+                "No"
+            ]
+        },
+        "D7": {
+            "question": "What types of systems do you spend time developing more than occasionally? (Select all that apply.)",
+            "type": "multi-select-with-other",
+            "qual_name": "D7",
+            "options": [
+                "Operating systems",
+                "Web applications",
+                "Mobile applications",
+                "Desktop applications",
+                "Middleware",
+                "AI-intensive systems",
+                "Development tools (compilers, programming languages, etc.)",
+                "Libraries/frameworks",
+                "Others (please specify)"
+            ]
+        },
+        "D8": {
+            "question": "How often did you release or help release a new major version of software/an application over the past two years? Please give your best estimate. If you have developed more than one software/application, please answer based on the most frequently updated software/application.",
+            "type": "single-select",
+            "qual_name": "D8",
+            "options": [
+                "Never",
+                "Annually",
+                "Quarterly",
+                "Monthly",
+                "More frequently than monthly"
+            ]
+        }
+    },
+    "Challenges/Tasks": {
+        "C1": {
+            "question": "How often have you performed the following software licensing-related tasks?",
+            "type": "matrix",
+            "qual_name": "C1",
+            "options": [
+                "Identifying the software licenses of dependencies in the software I develop",
+                "Understanding the terms of use/service of the tools/components we use to develop software",
+                "Assigning a license to software I develop",
+                "Changing the license of software I develop",
+                "Verifying that that use of a piece of software is in compliance with all relevant licenses",
+                "Acquiring or granting license exceptions for the software I develop",
+                "Identifying key terms in software licenses"
+            ],
+            "answers": [
+                "Never",
+                "Occasionally",
+                "Frequently",
+                "All the time",
+                "I don't know"
+            ]
+        },
+        "C2": {
+            "question": "Please rate the difficulty of the following licensing tasks.",
+            "type": "matrix",
+            "qual_name": "C2",
+            "options": [
+                "Identifying the software licenses of dependencies in the software I develop",
+                "Identifying the software licenses of the tools used in development tasks",
+                "Assigning a license to software I develop",
+                "Changing the license of software I develop",
+                "Verifying that use of a piece of software is in compliance with all relevant licenses (including those from dependencies and those from copy/pasted code)",
+                "Acquiring or granting license exceptions for the software I develop",
+                "Identifying key terms in software licenses"
+            ],
+            "answers": [
+                "Extremely difficult",
+                "Somewhat difficult",
+                "Neither easy nor difficult",
+                "Somewhat easy",
+                "Extremely easy",
+                "I don't know / I have no opinion"
+            ]
+        },
+        "C3": {
+            "question": "If you or your organization assign licenses to a software project, what factors are considered? Please select all that apply.",
+            "type": "multi-select-with-other",
+            "qual_name": "C3",
+            "options": [
+                "Dependency licenses",
+                "Allowing open source contribution to the software project",
+                "Intended distribution of software project",
+                "Intended use of software project",
+                "Development or language ecosystem (e.g., Maven, Gradle)",
+                "Organization policies",
+                "My or my organization's philosophy about the nature or purpose of OSS development",
+                "Dual / multi-licensing",
+                "Legal considerations",
+                "Impact on future contributions to the software project",
+                "My or my organization's views about ethical software distribution and use",
+                "Other(s)",
+                "I don't know",
+                "Not applicable"
+            ]
+        },
+        "C4": {
+            "question": "If you have encountered any licensing scenarios that are challenging to resolve, please provide specific examples of those scenarios. (Please respond as briefly or as fully as you'd like; any insights are appreciated.)",
+            "type": "short-answer",
+            "qual_name": "C4",
+            "coded": true
+        }
+    },
+    "Current Processes": {
+        "P1": {
+            "question": "Do you or your organization regularly work with any legal professionals or people otherwise trained in software licensing and/or copyright law?",
+            "type": "single-select",
+            "qual_name": "P1",
+            "options": [
+                "Yes",
+                "No",
+                "I don't know"
+            ]
+        },
+        "P2": {
+            "question": "If an issue related to software licensing arises during software development, who is responsible for resolving that issue?",
+            "type": "multi-select-with-other",
+            "qual_name": "P2",
+            "options": [
+                "Developers",
+                "Legal experts",
+                "An Open Source Program Office (OSPO) or similar structure",
+                "Other (please specify)",
+                "I don't know"
+            ]
+        },
+        "P3": {
+            "question": "If software licensing issues arise, is the solution typically immediately apparent, or does determining the solution require research? Please provide as much or as little detail as you'd like.",
+            "type": "short-answer",
+            "qual_name": "P3",
+            "coded": true
+        }
+    },
+    "Tool Usage": {
+        "TU1": {
+            "question": "Have you used any software tools to assist with software license compliance?",
+            "type": "single-select",
+            "qual_name": "TU1",
+            "options": [
+                "Yes",
+                "No"
+            ]
+        },
+        "TU2": {
+            "question": "What benefits, if any, have you or your organization derived from using software licensing tools?",
+            "type": "short-answer",
+            "qual_name": "TU2",
+            "coded": true
+        },
+        "TU3": {
+            "question": "What problems, if any, have you or your organization encountered when using software licensing tools?",
+            "type": "short-answer",
+            "qual_name": "TU3",
+            "coded": true
+        },
+        "TU4": {
+            "question": "Have you had to manually correct the output of license compliance tools?",
+            "type": "single-select",
+            "qual_name": "TU4",
+            "options": [
+                "Yes",
+                "No"
+            ]
+        },
+        "TU5": {
+            "question": "What features (if any) do you wish that license compliance tooling would support that it currently does not?",
+            "type": "short-answer",
+            "qual_name": "TU5",
+            "coded": true
+        }
+    },
+    "Contact Information": {
+        "CI": {
+            "question": "If you would be willing to be contacted for an interview to further explore your responses to this survey, please enter your e-mail address below.",
+            "type": "single-text",
+            "qual_name": "CI",
+            "contains_pii": true
+        }
+    }
+}

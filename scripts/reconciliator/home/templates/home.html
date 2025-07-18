@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- {% if surveys|length > 1 %}
+            <div style="float:right">
+                <form action="{% url 'home' %}" method="post">
+                    {% csrf_token %}
+                    <p>Your currently selected survey is: <b>{{cur_survey}}</b> <br> Which survey should we prepare for you?
+                    <select id="select_survey" name="select_survey">
+                            <option disabled="true" selected>Select Survey</option>
+                        {% for survey in surveys %}
+                            <option value="{{survey}}">{{survey}}</option>
+                        {% endfor %}
+                    </select></p>
+                </form>
+            </div>
+        {% endif %} -->
+
+
+    <h1>Survey Research Utilities</h1>
+    {% if surveys|length > 1 %}
+        <form action="{% url 'home' %}" method="post">
+            {% csrf_token %}
+            <label for="select_survey">Select the survey to work with:</label>
+            <select id="select_survey" name="select_survey">
+                <option disabled selected>Select Survey</option>
+                {% for survey in surveys %}
+                    <option value="{{ survey }}" {% if cur_survey == survey %}selected{% endif %}>{{ survey }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    {% else %}
+        <div id="survey_title">Current Survey: {{ cur_survey }}</div>
+    {% endif %}
+
+    <div class="upload-survey-container">
+        <a href="../addUploadSurveyForm/"><h3>Add and Upload Survey</h3></a>
+    </div>
+
+    <div class="categories">
+        <div>
+            <h4>Basic Utilities</h4>
+            <ol>
+                <li><a href="../removeSurvey/" onclick="return confirm('Are you sure you want to delete the {{cur_survey}} survey?')">Remove Survey</a></li>
+                <li><a href="../uploadQualtricsFile/">Upload New QSF File</a></li>
+                <li><a href="../reviewSurveyQuestions/">Review Questions</a></li>
+                <li><a href="../uploadDataFile">Upload/Update Data File</a></li>
+                <li><a href="../updateInvalid">Add/Remove IDs from Invalid Response List</a></li>
+                {% if csv_exists %}
+                    <li><a href="../configure_analysis/">Process Data</a></li>
+                {% endif %}
+            </ol>
+        </div>
+
+
+        {% if csv_exists %}
+            <div>
+                <h4>Open-Coding and Reconciliation</h4>
+                <ol>
+                    <li><a href="../chooseCodes/">Select Codes</a></li>
+                    <li><a href="../uploadCoderFile/">Upload/Update Coder File</a></li>
+                    <li><a href="../prepare_reconciliation">Prepare Reconciliator</a></li>
+                    <li><a href="../reconciliator">Run Reconciliator</a></li>
+                    <li><a href="../applyReconciliation">Apply Reconciliation</a></li>
+                    <li><a href="../selectCoder"> Start Opening Coding Tool</a></li>
+                </ol>
+            </div>
+        {% endif %}
+
+
+        {% if csv_exists %}
+            <div>
+                <h4>Data Analysis and Visualization</h4>
+                <ul>
+                    <li><a href="../showPlot">Generate and Explore Plots</a></li>
+                    <li><a href="../showComparison">Generate Comparison Tables</a></li>
+                    <li><a href="../showReport">Generate Full Survey Report</a></li>
+                    <li><a href="../browse">Search Responses by Code</a></li>
+                </ul>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        form = document.querySelector("form")
+
+        document.getElementById("select_survey").onchange = function () {
+            updateSurvey()
+        };
+
+        function updateSurvey() {
+            form.submit()
+        }
+    </script>
+{% endblock %}
